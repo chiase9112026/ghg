@@ -1,8 +1,9 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, AfterViewInit, ElementRef } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { MatIconModule } from '@angular/material/icon';
 import { DataService } from '../../services/data.service';
 import { DatePipe } from '@angular/common';
+import { animate, stagger } from "motion";
 
 @Component({
   selector: 'app-home',
@@ -10,23 +11,23 @@ import { DatePipe } from '@angular/common';
   imports: [RouterLink, MatIconModule, DatePipe],
   template: `
     <!-- Hero Banner -->
-    <div class="relative bg-ghg-500 overflow-hidden">
+    <div class="relative bg-ghg-500 overflow-hidden hero-section">
       <div class="absolute inset-0">
         <img class="w-full h-full object-cover opacity-40" src="https://picsum.photos/seed/forest/1920/1080" alt="Forest background" referrerpolicy="no-referrer">
         <div class="absolute inset-0 bg-gradient-to-r from-ghg-500 to-transparent mix-blend-multiply" aria-hidden="true"></div>
       </div>
       <div class="relative max-w-7xl mx-auto py-24 px-4 sm:py-32 sm:px-6 lg:px-8">
-        <div class="max-w-2xl">
-          <span class="inline-block py-1 px-3 rounded-full bg-ghg-500 bg-opacity-50 text-white text-sm font-semibold tracking-wider mb-6 border border-white/30">
+        <div class="max-w-2xl hero-content">
+          <span class="inline-block py-1 px-3 rounded-full bg-ghg-500 bg-opacity-50 text-white text-sm font-semibold tracking-wider mb-6 border border-white/30 animate-item">
             COMPREHENSIVE SOLUTIONS FOR A GREEN VIETNAM
           </span>
-          <h1 class="text-4xl font-extrabold tracking-tight text-white sm:text-5xl lg:text-6xl mb-6 leading-tight">
+          <h1 class="text-4xl font-extrabold tracking-tight text-white sm:text-5xl lg:text-6xl mb-6 leading-tight animate-item">
             {{ settings().heroTitle }}
           </h1>
-          <p class="mt-4 text-xl text-ghg-50 leading-relaxed font-light">
+          <p class="mt-4 text-xl text-ghg-50 leading-relaxed font-light animate-item">
             {{ settings().heroSubtitle }}
           </p>
-          <div class="mt-10 flex flex-col sm:flex-row gap-4">
+          <div class="mt-10 flex flex-col sm:flex-row gap-4 animate-item">
             <a routerLink="/about" class="inline-flex items-center justify-center px-8 py-3.5 border border-transparent text-base font-medium rounded-full shadow-sm text-ghg-500 bg-white hover:bg-gray-50 transition-colors">
               Tìm hiểu thêm
             </a>
@@ -224,10 +225,20 @@ import { DatePipe } from '@angular/common';
     </div>
   `
 })
-export class HomeComponent {
+export class HomeComponent implements AfterViewInit {
   dataService = inject(DataService);
+  el = inject(ElementRef);
   settings = this.dataService.settings;
   
+  ngAfterViewInit() {
+    const items = this.el.nativeElement.querySelectorAll('.animate-item');
+    animate(
+      items,
+      { opacity: [0, 1], y: [20, 0] },
+      { delay: stagger(0.1), duration: 0.8, ease: "easeOut" }
+    );
+  }
+
   // Get up to 3 upcoming events
   recentEvents = () => {
     return this.dataService.events().slice(0, 3);

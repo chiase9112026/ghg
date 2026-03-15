@@ -1,4 +1,4 @@
-import { Component, inject, signal } from '@angular/core';
+import { Component, inject, signal, HostListener } from '@angular/core';
 import { RouterOutlet, RouterLink, RouterLinkActive } from '@angular/router';
 import { MatIconModule } from '@angular/material/icon';
 import { CommonModule } from '@angular/common';
@@ -9,37 +9,37 @@ import { DataService } from '../services/data.service';
   standalone: true,
   imports: [CommonModule, RouterOutlet, RouterLink, RouterLinkActive, MatIconModule],
   template: `
-    <div class="min-h-screen bg-white font-sans flex flex-col">
+    <div class="min-h-screen bg-white font-sans flex flex-col relative">
       <!-- Header -->
       <header class="bg-white shadow-sm sticky top-0 z-50">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div class="flex justify-between h-20 items-center">
             <div class="flex-shrink-0 flex items-center">
-              <a routerLink="/" class="flex items-center gap-2">
-                <mat-icon class="text-ghg-500 text-3xl h-8 w-8">eco</mat-icon>
+              <a routerLink="/" class="flex items-center gap-2 group">
+                <mat-icon class="text-ghg-500 text-3xl h-8 w-8 group-hover:scale-110 transition-transform">eco</mat-icon>
                 <span class="text-2xl font-bold text-ghg-500 tracking-tight">{{ settings().siteName.substring(0, 3) }}<span class="text-white bg-ghg-500 px-1 rounded ml-0.5">{{ settings().siteName.substring(3) }}</span></span>
               </a>
             </div>
             
             <!-- Desktop Menu -->
             <nav class="hidden md:flex space-x-6 lg:space-x-8">
-              <a routerLink="/" routerLinkActive="text-ghg-500 border-b-2 border-ghg-500" [routerLinkActiveOptions]="{exact: true}" class="text-gray-600 hover:text-ghg-500 px-1 py-2 text-sm font-medium transition-colors">Trang chủ</a>
-              <a routerLink="/about" routerLinkActive="text-ghg-500 border-b-2 border-ghg-500" class="text-gray-600 hover:text-ghg-500 px-1 py-2 text-sm font-medium transition-colors">Về chúng tôi</a>
-              <a routerLink="/services" routerLinkActive="text-ghg-500 border-b-2 border-ghg-500" class="text-gray-600 hover:text-ghg-500 px-1 py-2 text-sm font-medium transition-colors">Dịch vụ</a>
-              <a routerLink="/hub" routerLinkActive="text-ghg-500 border-b-2 border-ghg-500" class="text-gray-600 hover:text-ghg-500 px-1 py-2 text-sm font-medium transition-colors">HUB</a>
-              <a routerLink="/experts" routerLinkActive="text-ghg-500 border-b-2 border-ghg-500" class="text-gray-600 hover:text-ghg-500 px-1 py-2 text-sm font-medium transition-colors">Chuyên gia</a>
-              <a routerLink="/events" routerLinkActive="text-ghg-500 border-b-2 border-ghg-500" class="text-gray-600 hover:text-ghg-500 px-1 py-2 text-sm font-medium transition-colors">Sự kiện</a>
-              <a routerLink="/partners" routerLinkActive="text-ghg-500 border-b-2 border-ghg-500" class="text-gray-600 hover:text-ghg-500 px-1 py-2 text-sm font-medium transition-colors">Đối tác</a>
+              <a routerLink="/" routerLinkActive="text-ghg-500 border-b-2 border-ghg-500" [routerLinkActiveOptions]="{exact: true}" class="text-gray-600 hover:text-ghg-500 px-1 py-2 text-sm font-medium transition-all hover:-translate-y-0.5">Trang chủ</a>
+              <a routerLink="/about" routerLinkActive="text-ghg-500 border-b-2 border-ghg-500" class="text-gray-600 hover:text-ghg-500 px-1 py-2 text-sm font-medium transition-all hover:-translate-y-0.5">Về chúng tôi</a>
+              <a routerLink="/services" routerLinkActive="text-ghg-500 border-b-2 border-ghg-500" class="text-gray-600 hover:text-ghg-500 px-1 py-2 text-sm font-medium transition-all hover:-translate-y-0.5">Dịch vụ</a>
+              <a routerLink="/hub" routerLinkActive="text-ghg-500 border-b-2 border-ghg-500" class="text-gray-600 hover:text-ghg-500 px-1 py-2 text-sm font-medium transition-all hover:-translate-y-0.5">HUB</a>
+              <a routerLink="/experts" routerLinkActive="text-ghg-500 border-b-2 border-ghg-500" class="text-gray-600 hover:text-ghg-500 px-1 py-2 text-sm font-medium transition-all hover:-translate-y-0.5">Chuyên gia</a>
+              <a routerLink="/events" routerLinkActive="text-ghg-500 border-b-2 border-ghg-500" class="text-gray-600 hover:text-ghg-500 px-1 py-2 text-sm font-medium transition-all hover:-translate-y-0.5">Sự kiện</a>
+              <a routerLink="/partners" routerLinkActive="text-ghg-500 border-b-2 border-ghg-500" class="text-gray-600 hover:text-ghg-500 px-1 py-2 text-sm font-medium transition-all hover:-translate-y-0.5">Đối tác</a>
             </nav>
             
             <div class="hidden md:flex items-center space-x-4">
               @if (currentUser()) {
-                <a routerLink="/dashboard" class="inline-flex items-center px-5 py-2.5 border border-transparent text-sm font-medium rounded-full text-white bg-ghg-500 hover:bg-opacity-90 shadow-sm transition-all hover:shadow-md">
+                <a routerLink="/dashboard" class="inline-flex items-center px-5 py-2.5 border border-transparent text-sm font-medium rounded-full text-white bg-ghg-500 hover:bg-opacity-90 shadow-sm transition-all hover:shadow-md hover:scale-105">
                   <mat-icon class="mr-2 text-sm h-5 w-5">dashboard</mat-icon>
                   Dashboard
                 </a>
               } @else {
-                <a routerLink="/login" class="inline-flex items-center px-5 py-2.5 border border-transparent text-sm font-medium rounded-full text-white bg-ghg-500 hover:bg-opacity-90 shadow-sm transition-all hover:shadow-md">
+                <a routerLink="/login" class="inline-flex items-center px-5 py-2.5 border border-transparent text-sm font-medium rounded-full text-white bg-ghg-500 hover:bg-opacity-90 shadow-sm transition-all hover:shadow-md hover:scale-105">
                   <mat-icon class="mr-2 text-sm h-5 w-5">login</mat-icon>
                   Đăng nhập
                 </a>
@@ -89,6 +89,13 @@ import { DataService } from '../services/data.service';
       <main class="flex-grow">
         <router-outlet></router-outlet>
       </main>
+
+      <!-- Back to top button -->
+      @if (showBackToTop()) {
+        <button (click)="scrollToTop()" class="fixed bottom-8 right-8 z-50 p-3 bg-ghg-500 text-white rounded-full shadow-lg hover:bg-ghg-600 transition-all hover:scale-110 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-ghg-500 animate-bounce">
+          <mat-icon>arrow_upward</mat-icon>
+        </button>
+      }
 
       <!-- Footer -->
       <footer class="bg-gray-900 text-white pt-16 pb-8">
@@ -163,6 +170,16 @@ export class LandingLayoutComponent {
   currentUser = this.dataService.currentUser;
   
   isMobileMenuOpen = signal(false);
+  showBackToTop = signal(false);
+
+  @HostListener('window:scroll', [])
+  onWindowScroll() {
+    this.showBackToTop.set(window.pageYOffset > 400);
+  }
+
+  scrollToTop() {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
 
   toggleMobileMenu() {
     this.isMobileMenuOpen.update(v => !v);

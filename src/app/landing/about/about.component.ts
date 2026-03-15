@@ -1,6 +1,7 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, AfterViewInit, ElementRef } from '@angular/core';
 import { MatIconModule } from '@angular/material/icon';
 import { DataService } from '../../services/data.service';
+import { animate, stagger } from "motion";
 
 @Component({
   selector: 'app-about',
@@ -8,17 +9,17 @@ import { DataService } from '../../services/data.service';
   imports: [MatIconModule],
   template: `
     <!-- Page Header -->
-    <div class="bg-ghg-500 py-16">
+    <div class="bg-ghg-500 py-16 animate-section">
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-        <h1 class="text-3xl font-extrabold text-white sm:text-4xl">Về Chúng Tôi</h1>
-        <p class="mt-4 text-xl text-ghg-100">Tìm hiểu về sứ mệnh, tầm nhìn và giá trị cốt lõi của GHGVIETNAM</p>
+        <h1 class="text-3xl font-extrabold text-white sm:text-4xl animate-item">Về Chúng Tôi</h1>
+        <p class="mt-4 text-xl text-ghg-100 animate-item">Tìm hiểu về sứ mệnh, tầm nhìn và giá trị cốt lõi của GHGVIETNAM</p>
       </div>
     </div>
 
     <!-- Thư ngỏ -->
-    <div class="py-16 bg-white">
+    <div class="py-16 bg-white animate-section">
       <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="prose prose-lg prose-ghg mx-auto text-gray-600" [innerHTML]="dataService.pageContent().about">
+        <div class="prose prose-lg prose-ghg mx-auto text-gray-600 animate-item" [innerHTML]="dataService.pageContent().about">
         </div>
       </div>
     </div>
@@ -94,6 +95,16 @@ import { DataService } from '../../services/data.service';
     </div>
   `
 })
-export class AboutComponent {
+export class AboutComponent implements AfterViewInit {
   dataService = inject(DataService);
+  el = inject(ElementRef);
+
+  ngAfterViewInit() {
+    const items = this.el.nativeElement.querySelectorAll('.animate-item');
+    animate(
+      items,
+      { opacity: [0, 1], y: [20, 0] },
+      { delay: stagger(0.1), duration: 0.8, ease: "easeOut" }
+    );
+  }
 }

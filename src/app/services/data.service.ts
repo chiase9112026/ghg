@@ -237,7 +237,7 @@ export class DataService {
     this.unsubscribes.push(unsub);
   }
 
-  private normalizeDates(data: Record<string, any>): Record<string, any> {
+  private normalizeDates(data: Record<string, unknown>): Record<string, unknown> {
     if (!data || typeof data !== 'object') return data;
     
     const result = { ...data };
@@ -245,14 +245,21 @@ export class DataService {
     
     for (const field of dateFields) {
       const value = result[field];
-      if (value && typeof value === 'string') {
-        const dmyRegex = /^(\d{1,2})[/-](\d{1,2})[/-](\d{4})$/;
-        const match = value.match(dmyRegex);
-        if (match) {
-          const day = match[1].padStart(2, '0');
-          const month = match[2].padStart(2, '0');
-          const year = match[3];
-          result[field] = `${year}-${month}-${day}`;
+      if (value) {
+        if (typeof value === 'string') {
+          // Handle DD/MM/YYYY or DD-MM-YYYY
+          const dmyRegex = /^(\d{1,2})[/-](\d{1,2})[/-](\d{4})(.*)$/;
+          const match = value.trim().match(dmyRegex);
+          if (match) {
+            const day = match[1].padStart(2, '0');
+            const month = match[2].padStart(2, '0');
+            const year = match[3];
+            const timePart = match[4] || '';
+            result[field] = `${year}-${month}-${day}${timePart}`;
+          }
+        } else if (value && typeof (value as { toDate?: () => Date }).toDate === 'function') {
+          // Handle Firestore Timestamp
+          result[field] = (value as { toDate: () => Date }).toDate().toISOString();
         }
       }
     }
