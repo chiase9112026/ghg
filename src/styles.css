@@ -1,0 +1,27 @@
+/* You can add global styles to this file, and also import other style files */
+@import url('https://fonts.googleapis.com/icon?family=Material+Icons');
+@import "tailwindcss";
+
+@theme {
+  --color-emerald-50: #f4f8f1;
+  --color-emerald-100: #e5f0df;
+  --color-emerald-200: #cce0bf;
+  --color-emerald-300: #a2cb8b;
+  --color-emerald-400: #86b36d;
+  --color-emerald-500: #689650;
+  --color-emerald-600: #50783b;
+  --color-emerald-700: #405f31;
+  --color-emerald-800: #354d2a;
+  --color-emerald-900: #2c4024;
+  
+  --color-ghg-50: #e9f1e9;
+  --color-ghg-100: #c8dfc9;
+  --color-ghg-200: #98c49a;
+  --color-ghg-300: #62a265;
+  --color-ghg-400: #3b853f;
+  --color-ghg-500: #237227;
+  --color-ghg-600: #1b5a1f;
+  --color-ghg-700: #164819;
+  --color-ghg-800: #123914;
+  --color-ghg-900: #0f2e11;
+}

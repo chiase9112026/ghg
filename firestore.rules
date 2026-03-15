@@ -1,0 +1,77 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // ===============================================================
+    // Helper Functions
+    // ===============================================================
+
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+
+    function isAdmin() {
+      return isAuthenticated() && 
+        (get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'ADMIN' ||
+         (request.auth.token.email == "chiase911@gmail.com" && request.auth.token.email_verified == true));
+    }
+
+    function hasRequiredFields(fields) {
+      return request.resource.data.keys().hasAll(fields);
+    }
+
+    function hasOnlyAllowedFields(fields) {
+      return request.resource.data.keys().hasOnly(fields);
+    }
+
+    // ===============================================================
+    // Collection Rules
+    // ===============================================================
+
+    match /users/{userId} {
+      allow read: if isAuthenticated();
+      allow write: if isAuthenticated();
+    }
+
+    match /roadmaps/{roadmapId} {
+      allow read: if isAuthenticated();
+      allow write: if isAuthenticated();
+    }
+
+    match /tasks/{taskId} {
+      allow read: if isAuthenticated();
+      allow write: if isAuthenticated();
+    }
+
+    match /partners/{partnerId} {
+      allow read: if true; // Publicly readable
+      allow write: if isAuthenticated();
+    }
+
+    match /events/{eventId} {
+      allow read: if true; // Publicly readable
+      allow write: if isAuthenticated();
+    }
+
+    match /eventRegistrations/{registrationId} {
+      allow read: if isAuthenticated();
+      allow write: if true; // Allow public registration
+    }
+
+    match /partnerRegistrations/{registrationId} {
+      allow read: if isAuthenticated();
+      allow write: if true; // Allow public registration
+    }
+
+    match /settings/{settingId} {
+      allow read: if true;
+      allow write: if isAuthenticated();
+    }
+
+    match /pageContent/{contentId} {
+      allow read: if true;
+      allow write: if isAuthenticated();
+    }
+  }
+}

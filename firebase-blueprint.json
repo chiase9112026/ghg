@@ -1,0 +1,115 @@
+{
+  "entities": {
+    "User": {
+      "title": "User",
+      "description": "User information in the system",
+      "type": "object",
+      "properties": {
+        "fullName": { "type": "string" },
+        "email": { "type": "string" },
+        "position": { "type": "string" },
+        "department": { "type": "string" },
+        "role": { "type": "string", "enum": ["ADMIN", "STAFF", "EXPERT", "ENTERPRISE", "STARTUP"] }
+      },
+      "required": ["fullName", "email", "role"]
+    },
+    "Roadmap": {
+      "title": "Roadmap",
+      "description": "Project roadmaps",
+      "type": "object",
+      "properties": {
+        "projectName": { "type": "string" },
+        "manager": { "type": "string" },
+        "startDate": { "type": "string" },
+        "endDate": { "type": "string" },
+        "progress": { "type": "number" },
+        "status": { "type": "string", "enum": ["PLANNING", "ONGOING", "ON_HOLD", "COMPLETED"] }
+      },
+      "required": ["projectName", "manager", "status"]
+    },
+    "Task": {
+      "title": "Task",
+      "description": "Tasks within a roadmap",
+      "type": "object",
+      "properties": {
+        "name": { "type": "string" },
+        "assignees": { "type": "array", "items": { "type": "string" } },
+        "roadmapId": { "type": "string" },
+        "status": { "type": "string", "enum": ["PENDING", "IN_PROGRESS", "REVIEWING", "COMPLETED", "OVERDUE"] },
+        "deadline": { "type": "string" }
+      },
+      "required": ["name", "roadmapId", "status"]
+    },
+    "Partner": {
+      "title": "Partner",
+      "description": "Partners and organizations",
+      "type": "object",
+      "properties": {
+        "name": { "type": "string" },
+        "type": { "type": "string", "enum": ["ENTERPRISE", "STARTUP", "INVESTOR", "NGO"] },
+        "industry": { "type": "string" },
+        "joinDate": { "type": "string" },
+        "logoUrl": { "type": "string" },
+        "website": { "type": "string" },
+        "contactEmail": { "type": "string" }
+      },
+      "required": ["name", "type"]
+    },
+    "Event": {
+      "title": "Event",
+      "description": "Events and workshops",
+      "type": "object",
+      "properties": {
+        "title": { "type": "string" },
+        "type": { "type": "string", "enum": ["TALKSHOW", "WORKSHOP", "MATCHING", "TRAINING"] },
+        "date": { "type": "string" },
+        "location": { "type": "string" },
+        "description": { "type": "string" },
+        "imageUrl": { "type": "string" },
+        "attendees": { "type": "number" }
+      },
+      "required": ["title", "type", "date"]
+    },
+    "EventRegistration": {
+      "title": "EventRegistration",
+      "description": "Registrations for events",
+      "type": "object",
+      "properties": {
+        "eventId": { "type": "string" },
+        "name": { "type": "string" },
+        "email": { "type": "string" },
+        "phone": { "type": "string" },
+        "organization": { "type": "string" },
+        "status": { "type": "string", "enum": ["PENDING", "APPROVED", "REJECTED"] },
+        "createdAt": { "type": "string" }
+      },
+      "required": ["eventId", "name", "email", "status"]
+    }
+  },
+  "firestore": {
+    "/users/{userId}": {
+      "schema": { "$ref": "User" },
+      "description": "User documents"
+    },
+    "/roadmaps/{roadmapId}": {
+      "schema": { "$ref": "Roadmap" },
+      "description": "Roadmap documents"
+    },
+    "/tasks/{taskId}": {
+      "schema": { "$ref": "Task" },
+      "description": "Task documents"
+    },
+    "/partners/{partnerId}": {
+      "schema": { "$ref": "Partner" },
+      "description": "Partner documents"
+    },
+    "/events/{eventId}": {
+      "schema": { "$ref": "Event" },
+      "description": "Event documents"
+    },
+    "/eventRegistrations/{registrationId}": {
+      "schema": { "$ref": "EventRegistration" },
+      "description": "Event registration documents"
+    }
+  }
+}
