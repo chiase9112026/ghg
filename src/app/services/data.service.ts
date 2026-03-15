@@ -213,7 +213,9 @@ export class DataService {
     const unsub = onSnapshot(query(collection(db, path)), (snapshot) => {
       const items: T[] = [];
       snapshot.forEach((doc) => {
-        items.push({ id: doc.id, ...doc.data() } as T);
+        const data = doc.data();
+        const normalizedData = this.normalizeDates(data);
+        items.push({ id: doc.id, ...normalizedData } as T);
       });
       signalRef.set(items);
     }, (error) => {
@@ -225,12 +227,36 @@ export class DataService {
   private syncDocument<T>(path: string, id: string, signalRef: { set: (val: T) => void }) {
     const unsub = onSnapshot(doc(db, path, id), (snapshot) => {
       if (snapshot.exists()) {
-        signalRef.set(snapshot.data() as T);
+        const data = snapshot.data();
+        const normalizedData = this.normalizeDates(data);
+        signalRef.set(normalizedData as T);
       }
     }, (error) => {
       handleFirestoreError(error, OperationType.GET, `${path}/${id}`);
     });
     this.unsubscribes.push(unsub);
+  }
+
+  private normalizeDates(data: Record<string, any>): Record<string, any> {
+    if (!data || typeof data !== 'object') return data;
+    
+    const result = { ...data };
+    const dateFields = ['date', 'startDate', 'endDate', 'deadline', 'joinDate', 'createdAt'];
+    
+    for (const field of dateFields) {
+      const value = result[field];
+      if (value && typeof value === 'string') {
+        const dmyRegex = /^(\d{1,2})[/-](\d{1,2})[/-](\d{4})$/;
+        const match = value.match(dmyRegex);
+        if (match) {
+          const day = match[1].padStart(2, '0');
+          const month = match[2].padStart(2, '0');
+          const year = match[3];
+          result[field] = `${year}-${month}-${day}`;
+        }
+      }
+    }
+    return result;
   }
 
   async addData<T>(path: string, data: T) {
